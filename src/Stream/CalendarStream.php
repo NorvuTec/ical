@@ -2,6 +2,9 @@
 
 namespace Norvutec\ical\Stream;
 
+/**
+ * A Stream that holds the content of the ical file as output or input
+ */
 class CalendarStream {
 
     /**

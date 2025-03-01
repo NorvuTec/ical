@@ -11,6 +11,9 @@ use Norvutec\ical\Exception\UnexpectedCalendarDataException;
 use Norvutec\ical\Stream\CalendarStream;
 use Norvutec\ical\Stream\CalendarStreamReader;
 
+/**
+ * Represents a todo in a calendar placed inside a {@link Calendar}
+ */
 class CalendarTodo {
 
     private string $uid;

@@ -11,6 +11,9 @@ use Norvutec\ical\Exception\UnexpectedCalendarDataException;
 use Norvutec\ical\Stream\CalendarStream;
 use Norvutec\ical\Stream\CalendarStreamReader;
 
+/**
+ * Represents a calendar event placed inside a {@link Calendar}
+ */
 class CalendarEvent {
 
     private string $uid;

@@ -8,6 +8,10 @@ use Norvutec\ical\Exception\UnexpectedCalendarDataException;
 use Norvutec\ical\Stream\CalendarStream;
 use Norvutec\ical\Stream\CalendarStreamReader;
 
+/**
+ * Represents a calendar with events and todos
+ * This calendar can contain multiple data and can be combined with other calendars to a ics file
+ */
 class Calendar {
 
     /**

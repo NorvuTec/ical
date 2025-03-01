@@ -3,7 +3,12 @@
 namespace Norvutec\ical\Stream;
 
 use Norvutec\ical\Exception\IndexOutOfBoundsException;
+use Norvutec\ical\Model\Calendar;
 
+/**
+ * Reader for a {@link CalendarStream} that reads the stream line by line
+ * Is used for importing a calendar file by {@link Calendar}
+ */
 class CalendarStreamReader {
 
     private CalendarStream $stream;
@@ -33,7 +38,7 @@ class CalendarStreamReader {
 
     /**
      * Moves the current line position back by one
-     * @return void
+     * @return CalendarStreamReader
      */
     public function back(): self {
         $this->currentLine--;

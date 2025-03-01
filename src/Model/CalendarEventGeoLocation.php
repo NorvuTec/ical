@@ -2,6 +2,9 @@
 
 namespace Norvutec\ical\Model;
 
+/**
+ * GeoLocation definition for a calendar element
+ */
 class CalendarEventGeoLocation {
 
     public function __construct(

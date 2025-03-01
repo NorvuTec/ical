@@ -2,6 +2,9 @@
 
 namespace Norvutec\ical\Model;
 
+/**
+ * Classification of an calendar element
+ */
 enum CalendarEventClassification: string {
 
     case PUBLIC = 'PUBLIC';
