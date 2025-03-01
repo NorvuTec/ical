@@ -11,12 +11,10 @@ use Norvutec\ical\Exception\UnexpectedCalendarDataException;
 use Norvutec\ical\Stream\CalendarStream;
 use Norvutec\ical\Stream\CalendarStreamReader;
 
-class CalendarEvent {
+class CalendarTodo {
 
     private string $uid;
     private \DateTime $dtStamp;
-    private \DateTime $dtStart;
-    private \DateTime $dtEnd;
     private ?CalendarEventClassification $class = null;
     private ?DateTime $created = null;
     private ?DateTime $lastModified = null;
@@ -27,7 +25,6 @@ class CalendarEvent {
     private ?string $organizer = null; // @TODO split into detailed options for organizer
     private ?int $priority = 0;
     private ?string $status = null;
-    private ?CalendarEventTransparency $transparency = null;
     private ?string $url = null;
     //@TODO Recurrence & Sequence
     private ?string $comment = null;
@@ -39,7 +36,7 @@ class CalendarEvent {
     private array $unknownImportLines = [];
 
     /**
-     * Writes the event to the stream
+     * Writes the todo to the stream
      * @param CalendarStream $stream The stream to write to
      * @return void
      * @throws MissingRequiredDataException
@@ -51,24 +48,9 @@ class CalendarEvent {
         if(!isset($this->dtStamp)) {
             throw new MissingRequiredDataException("dtStamp");
         }
-        if(!isset($this->dtStart)) {
-            throw new MissingRequiredDataException("dtStart");
-        }
-        $stream->addItem("BEGIN:VEVENT")
+        $stream->addItem("BEGIN:VTODO")
             ->addItem("UID:" . $this->uid)
             ->addItem("DTSTAMP:" . $this->dtStamp->format(Constants::DT_FORMAT));
-        if($this->dtStart->format('His') === "000000") {
-            $stream->addItem("DTSTART:VALUE=DATE:" . $this->dtStart->format(Constants::D_FORMAT));
-        }else{
-            $stream->addItem("DTSTART:" . $this->dtStart->format(Constants::DT_FORMAT));
-        }
-        if($this->dtEnd !== null) {
-            if($this->dtEnd->format('His') === "000000") {
-                $stream->addItem("DTEND:VALUE=DATE:" . $this->dtEnd->format(Constants::D_FORMAT));
-            }else{
-                $stream->addItem("DTEND:" . $this->dtEnd->format(Constants::DT_FORMAT));
-            }
-        }
         if($this->class) {
             $stream->addItem("CLASS:" . $this->class->value);
         }
@@ -99,9 +81,6 @@ class CalendarEvent {
         if($this->status) {
             $stream->addItem("STATUS:" . $this->status);
         }
-        if($this->transparency) {
-            $stream->addItem("TRANSP:" . $this->transparency->value);
-        }
         if($this->url) {
             $stream->addItem("URL:" . $this->url);
         }
@@ -111,25 +90,23 @@ class CalendarEvent {
         if($this->contact) {
             $stream->addItem("CONTACT:" . $this->contact);
         }
-        //https://www.rfc-editor.org/rfc/rfc5545.html#section-3.6.1
-
-        $stream->addItem("END:VEVENT");
+        $stream->addItem("END:VTODO");
     }
 
     /**
-     * Reads the event from the stream
+     * Reads the todo from the stream
      * @param CalendarStreamReader $reader The reader to read from
      * @throws IcalException
      */
     public function read(CalendarStreamReader $reader): self {
         if(!$reader->hasNext()) return $this;
         $firstLine = $reader->readLine();
-        if($firstLine !== "BEGIN:VEVENT") {
-            throw new UnexpectedCalendarDataException("BEGIN:VEVENT", $firstLine);
+        if($firstLine !== "BEGIN:VTODO") {
+            throw new UnexpectedCalendarDataException("BEGIN:VTODO", $firstLine);
         }
         while($reader->hasNext()) {
             $line = $reader->readLine();
-            if($line === "END:VEVENT") {
+            if($line === "END:VTODO") {
                 return $this;
             }
             if(str_starts_with($line, "UID:")) {
@@ -138,22 +115,6 @@ class CalendarEvent {
             }
             if(str_starts_with($line, "DTSTAMP:")) {
                 $this->dtStamp = \DateTime::createFromFormat(Constants::DT_FORMAT, substr($line, 8));
-                continue;
-            }
-            if(str_starts_with($line, "DTSTART:")) {
-                if(str_contains($line, "VALUE=DATE")) {
-                    $this->dtStart = \DateTime::createFromFormat(Constants::D_FORMAT, substr($line, 17));
-                }else{
-                    $this->dtStart = \DateTime::createFromFormat(Constants::DT_FORMAT, substr($line, 8));
-                }
-                continue;
-            }
-            if(str_starts_with($line, "DTEND:")) {
-                if(str_contains($line, "VALUE=DATE")) {
-                    $this->dtEnd = \DateTime::createFromFormat(Constants::D_FORMAT, substr($line, 15));
-                }else{
-                    $this->dtEnd = \DateTime::createFromFormat(Constants::DT_FORMAT, substr($line, 6));
-                }
                 continue;
             }
             if(str_starts_with($line, "CLASS:")) {
@@ -192,9 +153,6 @@ class CalendarEvent {
             if(str_starts_with($line, "STATUS:")) {
                 $this->status = substr($line, 7);
             }
-            if(str_starts_with($line, "TRANSP:")) {
-                $this->transparency = CalendarEventTransparency::tryFrom(substr($line, 7));
-            }
             if(str_starts_with($line, "URL:")) {
                 $this->url = substr($line, 4);
             }
@@ -228,28 +186,6 @@ class CalendarEvent {
     public function setDtStamp(DateTime $dtStamp): self
     {
         $this->dtStamp = $dtStamp;
-        return $this;
-    }
-
-    public function getDtStart(): DateTime
-    {
-        return $this->dtStart;
-    }
-
-    public function setDtStart(DateTime $dtStart): self
-    {
-        $this->dtStart = $dtStart;
-        return $this;
-    }
-
-    public function getDtEnd(): DateTime
-    {
-        return $this->dtEnd;
-    }
-
-    public function setDtEnd(DateTime $dtEnd): self
-    {
-        $this->dtEnd = $dtEnd;
         return $this;
     }
 
@@ -365,17 +301,6 @@ class CalendarEvent {
     public function setStatus(?string $status): self
     {
         $this->status = $status;
-        return $this;
-    }
-
-    public function getTransparency(): ?CalendarEventTransparency
-    {
-        return $this->transparency;
-    }
-
-    public function setTransparency(?CalendarEventTransparency $transparency): self
-    {
-        $this->transparency = $transparency;
         return $this;
     }
 

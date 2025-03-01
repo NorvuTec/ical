@@ -34,6 +34,12 @@ class Calendar {
      * @var array<CalendarEvent> The events in the calendar
      */
     private array $events = [];
+
+    /**
+     * @var array<CalendarTodo> The todos in the calendar
+     */
+    private array $todos = [];
+
     /**
      * @var array<string> lines of the import that are not known
      */
@@ -176,10 +182,16 @@ class Calendar {
                 $this->events[] = (new CalendarEvent())->read($reader->back());
                 continue;
             }
+            if(str_starts_with("BEGIN:VTODO", $line)) {
+                $stillInHeader = false;
+                $this->todos[] = (new CalendarTodo())->read($reader->back());
+                continue;
+            }
+            //@TODO add support vor VALARM, VJOURNAL, VFREEBUSY, VTIMEZONE
             if($stillInHeader) {
                 $this->customHeaders[] = $line;
             }else{
-                $this->illegalImportLines[] = $line;
+                $this->unknownImportLines[] = $line;
             }
         }
         return $this;
