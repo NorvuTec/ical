@@ -25,7 +25,17 @@ class CalendarStreamReader {
      * @return void
      */
     private function importLines(): void {
-        $this->lines = explode(CalendarStream::CRLF, $this->stream->getStream());
+        $fileContent = substr($this->stream->getStream(), 0, strlen("BEGIN:VCALENDAR")+20);
+        if (preg_match("/\r\n/", $fileContent)) {
+            $this->lines = explode(CalendarStream::CRLF, $this->stream->getStream());
+        } elseif (preg_match("/\r/", $fileContent)) {
+            $this->lines = explode("\\r", $this->stream->getStream());
+        } elseif (preg_match("/\n/", $fileContent)) {
+            $this->lines = explode("\\n", $this->stream->getStream());
+        } else {
+            // cant find any line endings to detect - using default
+            $this->lines = explode(CalendarStream::CRLF, $this->stream->getStream());
+        }
     }
 
     /**
