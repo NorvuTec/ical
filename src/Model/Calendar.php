@@ -37,7 +37,7 @@ class Calendar {
     /**
      * @var array<string> lines of the import that are not known
      */
-    private array $illegalImportLines = [];
+    private array $unknownImportLines = [];
 
     public function __construct() {
         $this->timezone = (new \DateTime())->getTimezone()->getName();
@@ -367,9 +367,9 @@ class Calendar {
         return $this;
     }
 
-    public function getIllegalImportLines(): array
+    public function getUnknownImportLines(): array
     {
-        return $this->illegalImportLines;
+        return $this->unknownImportLines;
     }
 
 }
