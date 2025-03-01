@@ -59,6 +59,12 @@ class CalendarStreamReader {
         }
         $nextLine = $this->lines[$this->currentLine];
         $this->currentLine++;
+        $addNextLine = $this->lines[$this->currentLine];
+        while(str_starts_with($addNextLine, ' ')) {
+            $nextLine .= substr($addNextLine, 1);
+            $this->currentLine++;
+            $addNextLine = $this->lines[$this->currentLine];
+        }
         return $nextLine;
     }
 
