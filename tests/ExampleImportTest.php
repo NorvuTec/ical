@@ -14,5 +14,6 @@ final class ExampleImportTest extends TestCase {
         $calendar = CalendarUtil::import(new CalendarStream($file));
         $this->assertCount(1, $calendar);
         $this->assertCount(9, $calendar[0]->getEvents());
+        $this->assertCount(0, $calendar[0]->getEvents()[0]->getUnknownImportLines());
     }
 }

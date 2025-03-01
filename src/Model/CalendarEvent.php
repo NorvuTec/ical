@@ -143,17 +143,17 @@ class CalendarEvent {
                 $this->dtStamp = \DateTime::createFromFormat(Constants::DT_FORMAT, substr($line, 8));
                 continue;
             }
-            if(str_starts_with($line, "DTSTART:")) {
+            if(str_starts_with($line, "DTSTART:") || str_starts_with($line, "DTSTART;")) {
                 if(str_contains($line, "VALUE=DATE")) {
-                    $this->dtStart = \DateTime::createFromFormat(Constants::D_FORMAT, substr($line, 17));
+                    $this->dtStart = \DateTime::createFromFormat(Constants::D_FORMAT, substr($line, 19));
                 }else{
                     $this->dtStart = \DateTime::createFromFormat(Constants::DT_FORMAT, substr($line, 8));
                 }
                 continue;
             }
-            if(str_starts_with($line, "DTEND:")) {
+            if(str_starts_with($line, "DTEND:") || str_starts_with($line, "DTEND;")) {
                 if(str_contains($line, "VALUE=DATE")) {
-                    $this->dtEnd = \DateTime::createFromFormat(Constants::D_FORMAT, substr($line, 15));
+                    $this->dtEnd = \DateTime::createFromFormat(Constants::D_FORMAT, substr($line, 17));
                 }else{
                     $this->dtEnd = \DateTime::createFromFormat(Constants::DT_FORMAT, substr($line, 6));
                 }
@@ -181,31 +181,40 @@ class CalendarEvent {
             }
             if(str_starts_with($line, "LOCATION:")) {
                 $this->location = $line;
+                continue;
             }
             if(str_starts_with($line, "GEO:")) {
                 $geo = explode(";", substr($line, 4));
                 $this->geoLocation = new CalendarEventGeoLocation((float)$geo[0], (float)$geo[1]);
+                continue;
             }
             if(str_starts_with($line, "ORGANIZER:")) {
                 $this->organizer = substr($line, 10);
+                continue;
             }
             if(str_starts_with($line, "PRIORITY:")) {
                 $this->priority = (int)substr($line, 9);
+                continue;
             }
             if(str_starts_with($line, "STATUS:")) {
                 $this->status = substr($line, 7);
+                continue;
             }
             if(str_starts_with($line, "TRANSP:")) {
                 $this->transparency = CalendarEventTransparency::tryFrom(substr($line, 7));
+                continue;
             }
             if(str_starts_with($line, "URL:")) {
                 $this->url = substr($line, 4);
+                continue;
             }
             if(str_starts_with($line, "COMMENT:")) {
                 $this->comment = substr($line, 8);
+                continue;
             }
             if(str_starts_with($line, "CONTACT:")) {
                 $this->contact = substr($line, 8);
+                continue;
             }
             $this->unknownImportLines[] = $line;
         }
