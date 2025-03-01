@@ -1,6 +1,6 @@
 {
   "name": "norvutec/ical",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "description": "A library to parse and generate multi-byte safe RFC 5545/7986 compliant .ics files",
   "keywords": ["ical", "ics", "calendar", "rfc5545", "RFC 5545", "RFC 7986", ".ics"],
