@@ -18,6 +18,12 @@ class CalendarStream {
      */
     private string $stream = "";
 
+    public function __construct(?string $fileContent = null) {
+        if($fileContent != null) {
+            $this->stream = $fileContent;
+        }
+    }
+
     /**
      * Resets the ical stream
      * @return void

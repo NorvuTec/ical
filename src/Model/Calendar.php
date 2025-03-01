@@ -383,6 +383,27 @@ class Calendar {
         return $this;
     }
 
+    public function addEvent(CalendarEvent $event): self {
+        $this->events[] = $event;
+        return $this;
+    }
+
+    public function getTodos(): array
+    {
+        return $this->todos;
+    }
+
+    public function setTodos(array $todos): self
+    {
+        $this->todos = $todos;
+        return $this;
+    }
+
+    public function addTodo(CalendarTodo $todo): self {
+        $this->todos[] = $todo;
+        return $this;
+    }
+
     public function getUnknownImportLines(): array
     {
         return $this->unknownImportLines;
