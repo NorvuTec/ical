@@ -35,8 +35,9 @@ class CalendarStreamReader {
      * Moves the current line position back by one
      * @return void
      */
-    public function back(): void {
+    public function back(): self {
         $this->currentLine--;
+        return $this;
     }
 
     /**

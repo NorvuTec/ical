@@ -2,8 +2,8 @@
 
 namespace Norvutec\ical\Model;
 
+use Norvutec\ical\Constants;
 use Norvutec\ical\Exception\IcalException;
-use Norvutec\ical\Exception\IndexOutOfBoundsException;
 use Norvutec\ical\Exception\UnexpectedCalendarDataException;
 use Norvutec\ical\Stream\CalendarStream;
 use Norvutec\ical\Stream\CalendarStreamReader;
@@ -74,7 +74,7 @@ class Calendar {
             $stream->addItem("X-WR-TIMEZONE:".$this->timezone);
         }
         if($this->lastModified) {
-            $stream->addItem("LAST-MODIFIED:".$this->lastModified->format("Ymd\THis\Z"));
+            $stream->addItem("LAST-MODIFIED:".$this->lastModified->format(Constants::DT_FORMAT));
         }
         if($this->refreshInterval) {
             $stream->addItem("REFRESH-INTERVAL;VALUE=DURATION:".$this->refreshInterval);
@@ -148,7 +148,7 @@ class Calendar {
                 continue;
             }
             if(str_starts_with("LAST-MODIFIED", $line)) {
-                $this->lastModified = \DateTime::createFromFormat("Ymd\THis\Z", substr($line, strpos($line, ":")+1));
+                $this->lastModified = \DateTime::createFromFormat(Constants::DT_FORMAT, substr($line, strpos($line, ":")+1));
                 continue;
             }
             if(str_starts_with("TIMEZONE", $line) || str_starts_with("X-WR-TIMEZONE", $line)) {
@@ -173,7 +173,7 @@ class Calendar {
             }
             if(str_starts_with("BEGIN:VEVENT", $line)) {
                 $stillInHeader = false;
-                $this->events[] = (new CalendarEvent())->read($reader);
+                $this->events[] = (new CalendarEvent())->read($reader->back());
                 continue;
             }
             if($stillInHeader) {
